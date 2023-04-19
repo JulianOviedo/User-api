@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { type User } from './types'
+import { SortBy, type User } from './types.d'
 import { UsersList } from './components/UserList'
 
 function App () {
   const [users, setUsers] = useState<User[]>([])
   const [showColors, setShowColors] = useState(false)
-  const [sortByCountry, setSortByCountry] = useState(false)
+  const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [filterCountry, setFilterCountry] = useState<string | null>(null)
 
   const originalUsers = useRef<User[]>([])
@@ -16,7 +16,8 @@ function App () {
   }
 
   const toggleSortByCountry = () => {
-    setSortByCountry(prevState => !prevState)
+    const newSortingValue = sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE
+    setSorting(newSortingValue)
   }
 
   const handleDelete = (email: string) => {
@@ -26,6 +27,10 @@ function App () {
 
   const handleReset = () => {
     setUsers(originalUsers.current)
+  }
+
+  const handleChangeSort = (sort: SortBy) => {
+    setSorting(sort)
   }
 
   useEffect(() => {
@@ -38,32 +43,44 @@ function App () {
       .catch(err => { console.log(err) })
   }, [])
 
-  const filteredUsers =
-    typeof filterCountry === 'string' && filterCountry.length > 0
+  const filteredUsers = useMemo(() => {
+    return typeof filterCountry === 'string' && filterCountry.length > 0
       ? users.filter(user => user.location.country.toLowerCase().includes(filterCountry.toLowerCase()))
       : users
+  }, [users, filterCountry])
 
-  const sortedUsers = sortByCountry
-    ? filteredUsers.sort((a, b) => {
-      return a.location.country.localeCompare(b.location.country)
-    })
-    : filteredUsers
+  const sortedUsers = useMemo(() => {
+    if (sorting === SortBy.NONE) return filteredUsers
+
+    if (sorting === SortBy.COUNTRY) {
+      return [...filteredUsers].sort((a, b) => a.location.country.localeCompare(b.location.country))
+    }
+
+    if (sorting === SortBy.NAME) {
+      return [...filteredUsers].sort((a, b) => a.name.first.localeCompare(b.name.first))
+    }
+
+    if (sorting === SortBy.LAST) {
+      return [...filteredUsers].sort((a, b) => a.name.last.localeCompare(b.name.last))
+    }
+  }
+  , [filteredUsers, sorting])
 
   return (
     <div className="App">
-      <h1>PRUEBA TECNICA</h1>
+      <h1>Users API</h1>
       <header>
         <button onClick={toggleColors}>
           Colorear Filas
         </button>
         <button onClick={toggleSortByCountry}>
-          {sortByCountry ? 'No ordenar por pais' : 'Ordernar por pais'}
+          {sorting === SortBy.COUNTRY ? 'No ordenar por pais' : 'Ordernar por pais'}
         </button>
         <button onClick={handleReset}>Resetear Estado</button>
         <input placeholder="Buscar por pais" onChange={e => { setFilterCountry(e.target.value) }} type="text" />
       </header>
       <main>
-      <UsersList users={sortedUsers} showColors={showColors} handleDelete={handleDelete} />
+          <UsersList changeSorting={handleChangeSort} users={sortedUsers} showColors={showColors} handleDelete={handleDelete} />
       </main>
     </div>
   )

@@ -15,5 +15,20 @@ header {
   padding: 1rem;
   display: flex;
   justify-content: center;
-  gap: 1rem
+  gap: 1rem;
+  margin-bottom: 46px;
+  margin-top: auto;
+}
+
+.sorter {
+  cursor: pointer;
+}
+
+th.sorter:focus,
+th.sorter:active {
+  text-decoration: underline;
+}
+
+input {
+  padding-left: 10px;
 }
