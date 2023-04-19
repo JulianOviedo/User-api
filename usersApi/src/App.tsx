@@ -24,7 +24,7 @@ function App () {
   }, [])
 
   const sortedUsers = sortByCountry
-    ? [...users]((a, b) => {
+    ? [...users].sort((a, b) => {
         return a.location.country.localeCompare(b.location.country)
       })
     : users
@@ -41,7 +41,7 @@ function App () {
         </button>
       </header>
       <main>
-      <UsersList users={users} showColors={showColors} />
+      <UsersList users={sortedUsers} showColors={showColors} />
       </main>
     </div>
   )
