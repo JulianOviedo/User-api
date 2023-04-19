@@ -11,3 +11,9 @@ body {
   color: white;
 }
 
+header {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem
+}
