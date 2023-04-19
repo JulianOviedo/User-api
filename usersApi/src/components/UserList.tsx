@@ -4,7 +4,7 @@ interface Props {
   handleDelete: (email: string) => void
   changeSorting: (sort: SortBy) => void
   showColors: boolean
-  users: User[]
+  users: User[] | undefined
 }
 
 export function UsersList ({ showColors, users, handleDelete, changeSorting }: Props) {
@@ -22,7 +22,7 @@ export function UsersList ({ showColors, users, handleDelete, changeSorting }: P
 
             <tbody>
                 {
-                    users.map((user, index) => {
+                    users?.map((user, index) => {
                       const backgroundColor = index % 2 === 0 ? '#ced4da' : '#6c757d'
                       const color = showColors ? backgroundColor : '#495057'
                       const fontColor = showColors ? 'black' : 'white'
