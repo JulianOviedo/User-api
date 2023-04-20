@@ -4,6 +4,7 @@
   padding: 2rem;
   text-align: center;
   width: 100%;
+  margin-bottom: auto;
 }
 
 body {
@@ -32,3 +33,4 @@ th.sorter:active {
 input {
   padding-left: 10px;
 }
+
